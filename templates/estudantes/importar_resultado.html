@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Resultado da importação{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Resultado da importação — {{ escola }}</h5>
+                <p><strong>{{ importados }}</strong> estudante(s) importado(s) com sucesso.</p>
+                {% if erros %}
+                <p class="text-danger mb-2"><strong>{{ erros|length }}</strong> linha(s) não foram importadas:</p>
+                <div class="table-responsive mb-3">
+                <table class="table table-sm table-bordered">
+                    <thead><tr><th>Linha</th><th>Motivo</th></tr></thead>
+                    <tbody>
+                    {% for erro in erros %}
+                        <tr><td>{{ erro.linha }}</td><td>{{ erro.motivo }}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                {% endif %}
+                <a href="{% url 'estudantes:lista' %}" class="btn btn-primary">Ver lista de estudantes</a>
+                <a href="{% url 'estudantes:importar_csv' %}" class="btn btn-outline-secondary">Importar outro arquivo</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

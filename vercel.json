@@ -1,0 +1,15 @@
+{
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": { "includeFiles": ["templates/**", "static/**", "staticfiles/**"] }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "api/index.py" }
+  ],
+  "crons": [
+    { "path": "/tasks/limpar-log-auditoria/", "schedule": "0 3 * * 0" }
+  ]
+}

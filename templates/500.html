@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erro no servidor · Acompanhamento Escola-Saúde</title>
+<!--
+    Esta página é renderizada pelo Django SEM os context processors normais
+    (sem `user`, sem `request`, sem `{% csrf_token %}` funcional) — é assim
+    de propósito: o erro 500 pode ter sido causado por uma falha que também
+    derrubaria qualquer coisa mais complexa (ex.: banco de dados fora do
+    ar), então esta página não estende base.html e não depende de nada além
+    de HTML/CSS estático. Ver templates/404.html para a página de "não
+    encontrado", que pode estender o layout normal com segurança.
+-->
+<style>
+    body { font-family: -apple-system, "Segoe UI", Arial, sans-serif; background:#f5f7fa; color:#212529;
+           display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; padding:24px; }
+    .box { max-width:420px; text-align:center; }
+    h1 { font-size:1.75rem; margin-bottom:.5rem; }
+    p { color:#555; }
+    a { display:inline-block; margin-top:1rem; padding:.5rem 1.25rem; background:#0d6efd; color:#fff;
+        text-decoration:none; border-radius:.375rem; }
+</style>
+</head>
+<body>
+    <div class="box">
+        <h1>Ocorreu um erro no servidor</h1>
+        <p>Algo deu errado ao processar a sua solicitação. A equipe técnica já foi notificada. Tente novamente em alguns instantes.</p>
+        <a href="/">Voltar ao início</a>
+    </div>
+</body>
+</html>

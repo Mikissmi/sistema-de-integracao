@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Caso #{{ caso.pk }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Caso #{{ caso.pk }} — {{ caso.estudante.nome }}</h4>
+    <span>
+        <span class="badge badge-gravidade-{{ caso.gravidade }} fs-6">Gravidade: {{ caso.get_gravidade_display }}</span>
+        <span class="badge badge-{{ caso.nivel_alerta }} fs-6">{{ caso.nivel_alerta }}</span>
+    </span>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body row">
+        <div class="col-md-3"><strong>Escola:</strong> {{ caso.estudante.escola }}</div>
+        <div class="col-md-3"><strong>Serviço Encaminhado:</strong> {{ caso.servico_encaminhado }}</div>
+        <div class="col-md-3"><strong>Data do Encaminhamento:</strong> {{ caso.data_encaminhamento|date:"d/m/Y" }}</div>
+        <div class="col-md-3">
+            <strong>Situação:</strong>
+            <form method="post" action="{% url 'casos:atualizar_situacao' caso.pk %}" class="d-flex gap-1 mt-1">
+                {% csrf_token %}
+                <label class="visually-hidden" for="{{ situacao_form.situacao.id_for_label }}">Situação do caso</label>
+                {{ situacao_form.situacao }}
+                <button type="submit" class="btn btn-sm btn-outline-primary">Salvar</button>
+            </form>
+        </div>
+        <div class="col-md-3 mt-2"><strong>Profissional (Educação):</strong> {{ caso.profissional_responsavel }}</div>
+        <div class="col-md-3 mt-2"><strong>Data do Atendimento:</strong> {{ caso.data_atendimento|date:"d/m/Y"|default:"—" }}</div>
+        <div class="col-md-3 mt-2"><strong>Retorno Previsto:</strong> {{ caso.retorno_previsto|date:"d/m/Y"|default:"—" }}</div>
+        <div class="col-md-3 mt-2"><strong>Dias sem retorno:</strong> {{ caso.dias_sem_retorno|default:"—" }}</div>
+        {% if caso.observacoes %}<div class="col-12 mt-2"><strong>Observações:</strong> {{ caso.observacoes }}</div>{% endif %}
+        {% if caso.anexo_encaminhamento %}
+        <div class="col-12 mt-2"><a href="{{ caso.anexo_encaminhamento.url }}" target="_blank">Ver PDF do encaminhamento</a></div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <h5>Linha do tempo (evoluções)</h5>
+        <ul class="list-group mb-4">
+            {% for ev in evolucoes %}
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <strong>{{ ev.data_movimentacao|date:"d/m/Y" }} — {{ ev.servico_responsavel }}</strong>
+                    <span class="text-muted small">{{ ev.profissional_responsavel }}</span>
+                </div>
+                <div>{{ ev.acao_realizada }}</div>
+                {% if ev.encaminhamento_efetuado %}<div class="small"><strong>Encaminhamento:</strong> {{ ev.encaminhamento_efetuado }}</div>{% endif %}
+                {% if ev.retorno_recebido %}<div class="small"><strong>Retorno:</strong> {{ ev.retorno_recebido }}</div>{% endif %}
+                {% if ev.observacoes %}<div class="small text-muted">{{ ev.observacoes }}</div>{% endif %}
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">Nenhuma evolução registrada ainda.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Registrar nova evolução</h6>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-2">
+                            <label class="form-label small" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary btn-sm w-100">Adicionar Evolução</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

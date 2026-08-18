@@ -1,0 +1,16 @@
+# Fonte das dependências (sem versão travada) — edite este arquivo, não o
+# requirements.txt. Depois de mudar algo aqui, regenere o lockfile com:
+#
+#   pip install pip-tools
+#   pip-compile --generate-hashes -o requirements.txt requirements.in
+#
+# requirements.txt é o lockfile de verdade (versões exatas + hashes) usado
+# para instalar em dev/produção — garante que todo mundo instala exatamente
+# as mesmas versões, em vez de "o que calhar de estar disponível hoje".
+Django==5.2.*
+dj-database-url==3.*
+psycopg[binary]==3.*
+whitenoise==6.*
+cryptography>=43
+python-dotenv==1.*
+django-axes==8.*

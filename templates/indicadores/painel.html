@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Painel de Indicadores{% endblock %}
+{% block content %}
+<h4 class="mb-3">
+    Painel de Indicadores
+    {% if user.perfil.perfil == "educacao" %}
+        <small class="text-muted fs-6">— {{ user.perfil.escola }}</small>
+    {% elif user.perfil.perfil == "saude" and user.perfil.territorio_esf %}
+        <small class="text-muted fs-6">— {{ user.perfil.territorio_esf }}</small>
+    {% endif %}
+</h4>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm"><div class="card-body">
+            <div class="text-muted small">Total de Registros</div>
+            <div class="fs-3 fw-bold">{{ total }}</div>
+        </div></div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm"><div class="card-body">
+            <div class="text-muted small">Casos Ativos</div>
+            <div class="fs-3 fw-bold text-primary">{{ ativos }}</div>
+        </div></div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm"><div class="card-body">
+            <div class="text-muted small">Aguardando Atendimento</div>
+            <div class="fs-3 fw-bold text-warning">{{ aguardando }}</div>
+        </div></div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm"><div class="card-body">
+            <div class="text-muted small">Encerrados</div>
+            <div class="fs-3 fw-bold text-success">{{ encerrados }}</div>
+        </div></div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm"><div class="card-body">
+            <div class="text-muted small">Tempo Médio de Espera</div>
+            <div class="fs-3 fw-bold">{{ tempo_medio_dias|default:"—" }}{% if tempo_medio_dias %} d{% endif %}</div>
+        </div></div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm border-danger"><div class="card-body">
+            <div class="text-muted small">Casos Críticos (atraso)</div>
+            <div class="fs-3 fw-bold text-danger">{{ casos_criticos }}</div>
+        </div></div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm border-warning"><div class="card-body">
+            <div class="text-muted small">Casos Graves/Urgentes</div>
+            <div class="fs-3 fw-bold" style="color:#fd7e14">{{ casos_graves }}</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Registros por Escola</h6>
+                <canvas id="graficoEscolas" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Ranking por Escola</h6>
+                <table class="table table-sm">
+                    <tbody>
+                    {% for p in por_escola %}
+                        <tr><td>{{ p.estudante__escola__nome }}</td><td class="text-end">{{ p.total }}</td></tr>
+                    {% empty %}
+                        <tr><td class="text-muted">Nenhum caso registrado ainda.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ grafico_labels|json_script:"grafico-labels" }}
+{{ grafico_valores|json_script:"grafico-valores" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+const graficoLabels = JSON.parse(document.getElementById('grafico-labels').textContent);
+const graficoValores = JSON.parse(document.getElementById('grafico-valores').textContent);
+new Chart(document.getElementById('graficoEscolas'), {
+    type: 'bar',
+    data: {
+        labels: graficoLabels,
+        datasets: [{ label: 'Casos', data: graficoValores, backgroundColor: '#0d6efd' }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } } } }
+});
+</script>
+{% endblock %}

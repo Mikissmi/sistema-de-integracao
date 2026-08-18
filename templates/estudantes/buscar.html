@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Novo Estudante / Encaminhamento{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Buscar estudante por CPF</h5>
+                <p class="text-muted small">Faça a busca antes de cadastrar, para evitar registros duplicados.</p>
+                <form method="get" class="d-flex gap-2 mb-3">
+                    <label for="{{ form.cpf.id_for_label }}" class="visually-hidden">CPF da Criança/Adolescente</label>
+                    {{ form.cpf }}
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </form>
+
+                {% if cpf_pesquisado %}
+                    {% if resultado %}
+                        <div class="alert alert-success">
+                            Estudante já cadastrado: <strong>{{ resultado.nome }}</strong> ({{ resultado.escola }}).
+                            <a href="{% url 'estudantes:detalhe' resultado.pk %}" class="alert-link">Ver registro e histórico</a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            Nenhum estudante encontrado com este CPF.
+                            <a href="{% url 'estudantes:novo' %}?cpf={{ cpf_pesquisado|urlencode }}" class="alert-link">Cadastrar novo estudante</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

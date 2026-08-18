@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Estudantes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Estudantes</h4>
+    <a href="{% url 'estudantes:importar_csv' %}" class="btn btn-outline-secondary btn-sm">Importar por CSV</a>
+</div>
+<form method="get" class="d-flex gap-2 mb-3">
+    <input type="text" name="q" class="form-control" placeholder="Buscar por nome..." value="{{ termo }}">
+    <button class="btn btn-primary">Buscar</button>
+</form>
+<div class="table-responsive">
+<table class="table table-hover bg-white">
+    <thead><tr><th>Nome</th><th>Escola</th><th>Ano/Turma</th><th>Território/ESF</th><th></th></tr></thead>
+    <tbody>
+        {% for e in estudantes %}
+        <tr>
+            <td><a href="{% url 'estudantes:detalhe' e.pk %}">{{ e.nome }}</a></td>
+            <td>{{ e.escola }}</td>
+            <td>{{ e.ano_turma }}</td>
+            <td>{{ e.territorio_esf }}</td>
+            <td><a href="{% url 'estudantes:detalhe' e.pk %}" class="btn btn-sm btn-outline-secondary">Abrir</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-muted">Nenhum estudante encontrado.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% include "_paginacao.html" with pagina=estudantes %}
+{% endblock %}

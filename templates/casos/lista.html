@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Casos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>
+        Casos / Encaminhamentos
+        {% if user.perfil.perfil == "educacao" %}
+            <small class="text-muted fs-6">— {{ user.perfil.escola }}</small>
+        {% elif user.perfil.perfil == "saude" and user.perfil.territorio_esf %}
+            <small class="text-muted fs-6">— {{ user.perfil.territorio_esf }}</small>
+        {% endif %}
+    </h4>
+    <a href="{% url 'casos:exportar_csv' %}?{{ request.GET.urlencode }}" class="btn btn-outline-secondary btn-sm">Exportar CSV</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <input type="text" name="q" class="form-control" placeholder="Nome do estudante" value="{{ filtros.q }}">
+    </div>
+    <div class="col-md-3">
+        <select name="escola" class="form-select">
+            <option value="">Todas as escolas</option>
+            {% for e in escolas %}
+            <option value="{{ e.pk }}" {% if filtros.escola == e.pk|stringformat:"s" %}selected{% endif %}>{{ e.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="territorio" class="form-select">
+            <option value="">Todos os territórios</option>
+            {% for t in territorios %}
+            <option value="{{ t.pk }}" {% if filtros.territorio == t.pk|stringformat:"s" %}selected{% endif %}>{{ t.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="tipo_atendimento" class="form-select">
+            <option value="">Todos os tipos de atendimento</option>
+            {% for tp in tipos_atendimento %}
+            <option value="{{ tp.pk }}" {% if filtros.tipo_atendimento == tp.pk|stringformat:"s" %}selected{% endif %}>{{ tp.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="situacao" class="form-select">
+            <option value="">Todas as situações</option>
+            {% for valor, rotulo in situacoes %}
+            <option value="{{ valor }}" {% if filtros.situacao == valor %}selected{% endif %}>{{ rotulo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="gravidade" class="form-select">
+            <option value="">Todas as gravidades</option>
+            {% for valor, rotulo in gravidades %}
+            <option value="{{ valor }}" {% if filtros.gravidade == valor %}selected{% endif %}>{{ rotulo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filtrar</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+<table class="table table-hover bg-white">
+    <thead>
+        <tr>
+            <th>Estudante</th>
+            <th>Escola</th>
+            <th>Serviço</th>
+            <th>Situação</th>
+            <th>Gravidade</th>
+            <th>Dias sem retorno</th>
+            <th>Alerta</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for caso in casos %}
+        <tr>
+            <td><a href="{% url 'casos:detalhe' caso.pk %}">{{ caso.estudante.nome }}</a></td>
+            <td>{{ caso.estudante.escola }}</td>
+            <td>{{ caso.servico_encaminhado }}</td>
+            <td>{{ caso.get_situacao_display }}</td>
+            <td><span class="badge badge-gravidade-{{ caso.gravidade }}">{{ caso.get_gravidade_display }}</span></td>
+            <td>{{ caso.dias_sem_retorno|default:"—" }}</td>
+            <td><span class="badge badge-{{ caso.nivel_alerta }}">{{ caso.nivel_alerta }}</span></td>
+            <td><a href="{% url 'casos:detalhe' caso.pk %}" class="btn btn-sm btn-outline-secondary">Abrir</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-muted">Nenhum caso encontrado.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% include "_paginacao.html" with pagina=casos %}
+{% endblock %}
