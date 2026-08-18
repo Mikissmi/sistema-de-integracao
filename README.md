@@ -1,4 +1,4 @@
-# Acompanhamento Intersetorial — Educação e Saúde (Nova Santa Rita)
+# Acompanhamento Intersetorial — Educação e Saúde 
 
 Sistema web para acompanhamento dos estudantes encaminhados pela rede escolar aos serviços de saúde, substituindo o modelo de planilhas por unidade escolar. Ver o planejamento completo em [`docs/planejamento-acompanhamento-intersetorial.md`](docs/planejamento-acompanhamento-intersetorial.md).
 
